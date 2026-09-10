@@ -18,6 +18,7 @@ from tensorboardX import SummaryWriter
 from torchvision.models import resnet18, resnet50
 from tqdm import trange
 
+data_root = "/scratch/hflechsi/.medmnist"
 
 def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download, model_flag, resize, as_rgb, model_path, run):
 
@@ -43,7 +44,11 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
 
     device = torch.device('cuda:{}'.format(gpu_ids[0])) if gpu_ids else torch.device('cpu') 
     
-    output_root = os.path.join(output_root, data_flag, time.strftime("%y%m%d_%H%M%S"))
+    output_root = os.path.join(
+        output_root,
+        data_flag,
+        f"{run}_{time.strftime('%y%m%d_%H%M%S')}"
+    )
     if not os.path.exists(output_root):
         os.makedirs(output_root)
 
@@ -58,24 +63,64 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
         data_transform = transforms.Compose(
             [transforms.ToTensor(),
             transforms.Normalize(mean=[.5], std=[.5])])
-     
-    train_dataset = DataClass(split='train', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
-    val_dataset = DataClass(split='val', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
-    test_dataset = DataClass(split='test', transform=data_transform, download=download, as_rgb=as_rgb, size=size)
+         
+    train_dataset = DataClass(
+        split='train',
+        root=data_root,
+        transform=data_transform,
+        download=download,
+        as_rgb=as_rgb,
+        size=size
+    )
 
-    
-    train_loader = data.DataLoader(dataset=train_dataset,
-                                batch_size=batch_size,
-                                shuffle=True)
-    train_loader_at_eval = data.DataLoader(dataset=train_dataset,
-                                batch_size=batch_size,
-                                shuffle=False)
-    val_loader = data.DataLoader(dataset=val_dataset,
-                                batch_size=batch_size,
-                                shuffle=False)
-    test_loader = data.DataLoader(dataset=test_dataset,
-                                batch_size=batch_size,
-                                shuffle=False)
+    val_dataset = DataClass(
+        split='val',
+        root=data_root,
+        transform=data_transform,
+        download=download,
+        as_rgb=as_rgb,
+        size=size
+    )
+
+    test_dataset = DataClass(
+        split='test',
+        root=data_root,
+        transform=data_transform,
+        download=download,
+        as_rgb=as_rgb,
+        size=size
+    )
+
+    loader_kwargs = {
+        "batch_size": batch_size,
+        "num_workers": 8,
+        "pin_memory": True,
+        "persistent_workers": True
+    }
+
+    train_loader = data.DataLoader(
+        train_dataset,
+        shuffle=True,
+        **loader_kwargs
+    )
+
+    train_loader_at_eval = data.DataLoader(
+        train_dataset,
+        shuffle=False,
+        **loader_kwargs
+    )
+
+    val_loader = data.DataLoader(
+        val_dataset,
+        shuffle=False,
+        **loader_kwargs
+    )
+
+    test_loader = data.DataLoader(
+        test_dataset,
+        shuffle=False,
+        **loader_kwargs
+    )
 
     print('==> Building and training model...')
     
