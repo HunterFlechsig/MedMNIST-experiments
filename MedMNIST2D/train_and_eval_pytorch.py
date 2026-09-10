@@ -134,9 +134,26 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download
 
     model = model.to(device)
 
-    train_evaluator = medmnist.Evaluator(data_flag, 'train', size=size)
-    val_evaluator = medmnist.Evaluator(data_flag, 'val', size=size)
-    test_evaluator = medmnist.Evaluator(data_flag, 'test', size=size)
+    train_evaluator = medmnist.Evaluator(
+    data_flag,
+    'train',
+    size=size,
+    root=data_root
+    )
+
+    val_evaluator = medmnist.Evaluator(
+        data_flag,
+        'val',
+        size=size,
+        root=data_root
+    )
+
+    test_evaluator = medmnist.Evaluator(
+        data_flag,
+        'test',
+        size=size,
+        root=data_root
+    )
 
     if task == "multi-label, binary-class":
         criterion = nn.BCEWithLogitsLoss()

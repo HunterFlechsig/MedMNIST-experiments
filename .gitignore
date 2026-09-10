@@ -1,3 +1,9 @@
+logs/
+MedMNIST2D/output/
+__pycache__/
+*.swp
+
+
 .DS_Store
 
 # Byte-compiled / optimized / DLL files

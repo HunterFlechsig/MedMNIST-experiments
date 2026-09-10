@@ -3,7 +3,7 @@
 #SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
-#SBATCH --mem=16G
+#SBATCH --mem=32G
 #SBATCH --time=00:15:00
 #SBATCH --output=logs/test_%j.out
 #SBATCH --error=logs/test_%j.err
@@ -16,7 +16,7 @@ module load cuda-12.6.1-gcc-12.1.0
 
 source activate image_pytorch
 
-cd /MedMNIST-experiments/MedMNIST2D
+cd /home/hflechsi/MedMNIST-experiments/MedMNIST2D
 
 echo "Starting job on $(hostname)"
 echo "GPU:"
