@@ -16,7 +16,7 @@ module load cuda-12.6.1-gcc-12.1.0
 
 source activate image_pytorch
 
-cd /home/hflechsi/MedMNIST-experiments/MedMNIST2D
+cd $HOME/hflechsi/MedMNIST-experiments/MedMNIST2D
 
 echo "Starting job on $(hostname)"
 echo "GPU:"

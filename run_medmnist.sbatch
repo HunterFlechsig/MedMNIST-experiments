@@ -24,7 +24,7 @@ if [ -z "$DATASET" ]; then
     exit 1
 fi
 
-cd /home/hflechsi/MedMNIST-experiments/MedMNIST2D
+cd $HOME/MedMNIST-experiments/MedMNIST2D
 
 echo "========================================="
 echo "Dataset      : ${DATASET}"

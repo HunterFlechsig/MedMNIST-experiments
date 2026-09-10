@@ -17,8 +17,9 @@ from models import ResNet18, ResNet50
 from tensorboardX import SummaryWriter
 from torchvision.models import resnet18, resnet50
 from tqdm import trange
+import os
 
-data_root = "/scratch/hflechsi/.medmnist"
+data_root = f"/scratch/{os.environ['USER']}/.medmnist"
 
 def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, download, model_flag, resize, as_rgb, model_path, run):
 
