@@ -1,0 +1,33 @@
+#!/bin/bash
+#SBATCH --job-name=medmnist_test
+#SBATCH --partition=gpu
+#SBATCH --gres=gpu:1
+#SBATCH --cpus-per-task=8
+#SBATCH --mem=16G
+#SBATCH --time=00:15:00
+#SBATCH --output=logs/test_%j.out
+#SBATCH --error=logs/test_%j.err
+
+module purge
+
+# If your cluster requires loading CUDA:
+module load mamba/latest 
+module load cuda-12.6.1-gcc-12.1.0
+
+source activate image_pytorch
+
+cd /MedMNIST-experiments/MedMNIST2D
+
+echo "Starting job on $(hostname)"
+echo "GPU:"
+nvidia-smi
+
+python train_and_eval_pytorch.py \
+    --data_flag chestmnist \
+    --model_flag resnet50 \
+    --num_epochs 1 \
+    --gpu_ids 0 \
+    --download \
+    --run test
+
+echo "Finished."
