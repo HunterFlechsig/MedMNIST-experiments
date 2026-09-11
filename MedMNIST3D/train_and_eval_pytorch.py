@@ -18,6 +18,7 @@ from tensorboardX import SummaryWriter
 from tqdm import trange
 from utils import Transform3D, model_to_syncbn
 
+data_root = f"/scratch/{os.environ['USER']}/.medmnist"
 
 def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, conv, pretrained_3d, download, model_flag, as_rgb, shape_transform, model_path, run):
 
@@ -58,18 +59,31 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, conv, pr
     val_dataset = DataClass(split='val', transform=eval_transform, download=download, as_rgb=as_rgb, size=size)
     test_dataset = DataClass(split='test', transform=eval_transform, download=download, as_rgb=as_rgb, size=size)
 
+    loader_kwargs = {
+        "num_workers": 8,
+        "pin_memory": True,
+        "persistent_workers": True
+    }
     
     train_loader = data.DataLoader(dataset=train_dataset,
                                 batch_size=batch_size,
+                                root=data_root,
+                                **loader_kwargs,
                                 shuffle=True)
     train_loader_at_eval = data.DataLoader(dataset=train_dataset_at_eval,
                                 batch_size=batch_size,
+                                root=data_root,
+                                **loader_kwargs,
                                 shuffle=False)
     val_loader = data.DataLoader(dataset=val_dataset,
                                 batch_size=batch_size,
+                                **loader_kwargs,
+                                root=data_root,
                                 shuffle=False)
     test_loader = data.DataLoader(dataset=test_dataset,
+                                root=data_root,
                                 batch_size=batch_size,
+                                **loader_kwargs,
                                 shuffle=False)
 
     print('==> Building and training model...')
@@ -93,9 +107,9 @@ def main(data_flag, output_root, num_epochs, gpu_ids, batch_size, size, conv, pr
     
     model = model.to(device)
 
-    train_evaluator = medmnist.Evaluator(data_flag, 'train', size=size)
-    val_evaluator = medmnist.Evaluator(data_flag, 'val', size=size)
-    test_evaluator = medmnist.Evaluator(data_flag, 'test', size=size)
+    train_evaluator = medmnist.Evaluator(data_flag, 'train', size=size, root=data_root)
+    val_evaluator = medmnist.Evaluator(data_flag, 'val', size=size, root=data_root)
+    test_evaluator = medmnist.Evaluator(data_flag, 'test', size=size, root=data_root)
 
     criterion = nn.CrossEntropyLoss()
 

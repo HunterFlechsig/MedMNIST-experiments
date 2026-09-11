@@ -40,6 +40,7 @@ python train_and_eval_pytorch.py \
     --model_flag resnet50 \
     --gpu_ids 0 \
     --download \
+    --num_epochs 50 \
     --run run${SLURM_ARRAY_TASK_ID}
 
 echo "Finished ${DATASET} run ${SLURM_ARRAY_TASK_ID}"
